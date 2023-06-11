@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AppV2</string>
+    <string name="idNombre_elements">Nombre</string>
+    <string name="IdActor_elements">Actor</string>
+    <string name="idGenero_elements">Genero</string>
+    <string name="Boton_estudiantes">Estudiantes</string>
+    <string name="boton_personal">personal</string>
+    <string name="name_datails">Name: %1$s </string>
+    <string name="actor_datails">Actor: %1$s</string>
+    <string name="patronus_datails">Patronus: %1$s</string>
+    <string name="eyes_colour_datails">Eyes colour: %1$s</string>
+    <string name="hair_colour_datails">Hair colour: %1$s</string>
+    <string name="date_of_birth_datails">Date of Birth: %1$s</string>
+    <string name="ancestry_datails">Ancestry: %1$s</string>
+    <string name="house_datails">House: %1$s</string>
+    <string name="gerder_details">Gerder: %1$s</string>
+    <string name="species_details">Species: %1$s</string>
+    <string name="Noconexion">No hay conexión</string>
+</resources>
