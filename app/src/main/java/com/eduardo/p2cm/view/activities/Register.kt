@@ -6,75 +6,57 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.eduardo.p2cm.R
-import com.eduardo.p2cm.databinding.ActivityInicioBinding
 import com.eduardo.p2cm.databinding.ActivityLoginBinding
 import com.eduardo.p2cm.databinding.ActivityRegisterBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-
-
-import com.eduardo.p2cm.view.activities.inicio
-import com.eduardo.p2cm.view.activities.Register
-
 import com.google.firebase.auth.FirebaseAuthException
 
-class Login : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
-
+class Register : AppCompatActivity() {
+    private lateinit var binding: ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
 
 
     private var email = ""
-    private var password = ""
+    private var password1 = ""
+    private var password2 = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         firebaseAuth = FirebaseAuth.getInstance()
 
-        binding.buttonLogin.setOnClickListener{
+
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.buttomPasswordR.setOnClickListener{
             if (!valida()) return@setOnClickListener
 
             binding.pbConexionLogin.visibility = View.VISIBLE
 
-            autenticaUsuario(email, password)
+            registraUsuario(email, password1)
 
 
 
         }
-
-        binding.buttomPassword.setOnClickListener{
-
-
-            val intent = Intent(this, Register::class.java)
-            startActivity(intent)
-
-        }
-
-
     }
-    private fun autenticaUsuario(usr: String, psw: String ){
+    private fun registraUsuario(usr: String, psw: String) {
+        firebaseAuth.createUserWithEmailAndPassword(usr, psw)
+            .addOnCompleteListener { registrationTask ->
+                if (registrationTask.isSuccessful) {
 
-        firebaseAuth.signInWithEmailAndPassword(usr, psw).addOnCompleteListener {
-            authResult ->
-
-            if (authResult.isSuccessful){
-
-                val intent = Intent(this, inicio::class.java)
-                startActivity(intent)
-                finish()
-
-
-            }else{
-                binding.pbConexionLogin.visibility = View.GONE
-                manejaErrores(authResult)
+                    val intent = Intent(this, inicio::class.java)
+                    startActivity(intent)
+                    finishAffinity()
+                } else {
+                    binding.pbConexionLogin.visibility = View.GONE
+                    manejaErrores(registrationTask)
+                }
             }
-
-        }
-
-
     }
+
 
     private fun manejaErrores(task: Task<AuthResult>) {
         var errorCode: String? = null
@@ -88,14 +70,14 @@ class Login : AppCompatActivity() {
         when (errorCode) {
             "ERROR_INVALID_EMAIL" -> {
                 Toast.makeText(this, "Error: El correo electrónico no tiene un formato correcto", Toast.LENGTH_SHORT).show()
-                binding.email.error = "Error: El correo electrónico no tiene un formato correcto"
-                binding.email.requestFocus()
+                binding.emailr.error = "Error: El correo electrónico no tiene un formato correcto"
+                binding.emailr.requestFocus()
             }
             "ERROR_WRONG_PASSWORD" -> {
                 Toast.makeText(this, "Error: La contraseña no es válida", Toast.LENGTH_SHORT).show()
-                binding.password.error = "La contraseña no es válida"
-                binding.password.requestFocus()
-                binding.password.setText("")
+                binding.passwordR1.error = "La contraseña no es válida"
+                binding.passwordR1.requestFocus()
+                binding.passwordR1.setText("")
             }
             "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" -> {
                 // An account already exists with the same email address but different sign-in credentials.
@@ -104,8 +86,8 @@ class Login : AppCompatActivity() {
             }
             "ERROR_EMAIL_ALREADY_IN_USE" -> {
                 Toast.makeText(this, "Error: el correo electrónico ya está en uso con otra cuenta.", Toast.LENGTH_LONG).show()
-                binding.email.error = "Error: el correo electrónico ya está en uso con otra cuenta."
-                binding.email.requestFocus()
+                binding.emailr.error = "Error: el correo electrónico ya está en uso con otra cuenta."
+                binding.emailr.requestFocus()
             }
             "ERROR_USER_TOKEN_EXPIRED" -> {
                 Toast.makeText(this, "Error: La sesión ha expirado. Favor de ingresar nuevamente.", Toast.LENGTH_LONG).show()
@@ -115,8 +97,8 @@ class Login : AppCompatActivity() {
             }
             "ERROR_WEAK_PASSWORD" -> {
                 Toast.makeText(this, "La contraseña proporcionada es inválida", Toast.LENGTH_LONG).show()
-                binding.password.error = "La contraseña debe de tener por lo menos 6 caracteres"
-                binding.password.requestFocus()
+                binding.passwordR1.error = "La contraseña debe de tener por lo menos 6 caracteres"
+                binding.passwordR1.requestFocus()
             }
             "NO_NETWORK" -> {
                 Toast.makeText(this, "Red no disponible o se interrumpió la conexión", Toast.LENGTH_LONG).show()
@@ -126,30 +108,30 @@ class Login : AppCompatActivity() {
             }
         }
 
-
-
-
-
-
     }
 
-    private fun valida(): Boolean{
-        email = binding.email.text.toString().trim()
-        password = binding.password.text.toString().trim()
+    private fun valida(): Boolean {
+        email = binding.emailr.text.toString().trim()
+        password1 = binding.passwordR1.text.toString().trim()
+        password2 = binding.passwordR2.text.toString().trim()
 
-        if(email.isEmpty()){
-            binding.email.error = "Email Error"
-            binding.email.requestFocus()
+        if (email.isEmpty()) {
+            binding.emailr.error = "Email Error"
+            binding.emailr.requestFocus()
             return false
         }
-        if(password.isEmpty() || password.length < 6){
-            binding.password.error = "Error debe tener al menos 6 caratecters"
-            binding.password.requestFocus()
+        if (password1.isEmpty() || password1.length < 6) {
+            binding.passwordR1.error = "Error: debe tener al menos 6 caracteres"
+            binding.passwordR1.requestFocus()
             return false
         }
-
+        if (password1 != password2) {
+            binding.passwordR2.error = "Error: las contraseñas no coinciden"
+            binding.passwordR2.requestFocus()
+            return false
+        }
 
         return true
-
     }
+
 }
